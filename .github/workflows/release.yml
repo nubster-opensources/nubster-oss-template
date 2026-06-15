@@ -28,6 +28,7 @@ jobs:
   publish:
     name: Publish to crates.io
     runs-on: ubuntu-latest
+    if: ${{ github.repository != 'nubster-opensources/nubster-oss-template' }}
     permissions:
       contents: read
     steps:
@@ -35,7 +36,7 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
         with:
-          toolchain: "{{msrv}}.0"
+          toolchain: "1.88.0"
 
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
@@ -45,7 +46,7 @@ jobs:
         id: mode
         shell: bash
         run: |
-          if [[ "{% raw %}${{ github.event_name }}{% endraw %}" == "workflow_dispatch" && "{% raw %}${{ inputs.dry_run }}{% endraw %}" == "true" ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.dry_run }}" == "true" ]]; then
             echo "args=--dry-run" >> "$GITHUB_OUTPUT"
             echo "is_dry=true" >> "$GITHUB_OUTPUT"
             echo "Publishing in DRY-RUN mode"
@@ -56,19 +57,20 @@ jobs:
           fi
 
       - name: Workspace build (dry-run only, catches cross-crate compile errors)
-        if: {% raw %}${{ steps.mode.outputs.is_dry == 'true' }}{% endraw %}
+        if: ${{ steps.mode.outputs.is_dry == 'true' }}
         run: cargo build --workspace --all-features --release
 
-      - name: Publish {{crate_name}}
+      # TODO: set the crate(s) to publish (use -p <crate-name> for each crate)
+      - name: Publish crate(s)
         env:
-          CARGO_REGISTRY_TOKEN: {% raw %}${{ secrets.CARGO_REGISTRY_TOKEN }}{% endraw %}
-        run: cargo publish -p {{crate_name}} {% raw %}${{ steps.mode.outputs.args }}{% endraw %}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish ${{ steps.mode.outputs.args }}
 
   github-release:
     name: Create Release
     runs-on: ubuntu-latest
     needs: publish
-    if: {% raw %}${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}{% endraw %}
+    if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
     permissions:
       contents: write
     steps:
@@ -91,7 +93,7 @@ jobs:
       - name: Extract changelog section
         id: changelog
         env:
-          VERSION: {% raw %}${{ steps.version.outputs.version }}{% endraw %}
+          VERSION: ${{ steps.version.outputs.version }}
         shell: bash
         run: |
           awk -v v="[$VERSION]" '
@@ -108,10 +110,10 @@ jobs:
 
       - name: Create Release
         env:
-          GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
-          VERSION: {% raw %}${{ steps.version.outputs.version }}{% endraw %}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           gh release create "v$VERSION" \
             --title "v$VERSION" \
             --notes-file release-notes.md \
-            --repo nubster-opensources/{{project-name}}
+            --repo ${{ github.repository }}

@@ -16,6 +16,7 @@ jobs:
   bump:
     name: Run release prep script
     runs-on: ubuntu-latest
+    if: ${{ github.repository != 'nubster-opensources/nubster-oss-template' }}
     permissions:
       contents: write
       pull-requests: write
@@ -23,18 +24,18 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
         with:
-          toolchain: "{{msrv}}.0"
+          toolchain: "1.88.0"
 
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
         with:
           key: bump
 
       - name: Install cargo-release
-        # Pinned to the latest version that supports our MSRV (Rust {{msrv}}).
+        # Pinned to the latest version that supports MSRV 1.88.
         # cargo-release 1.1+ requires Rust 1.91+.
         run: cargo install --locked cargo-release@0.25.20
 
@@ -45,8 +46,8 @@ jobs:
 
       - name: Run release prep script
         env:
-          GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
-          LEVEL: {% raw %}${{ inputs.level }}{% endraw %}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LEVEL: ${{ inputs.level }}
         # Invoked via `bash` explicitly so the runner does not depend on
         # the executable bit, which is not always preserved when the
         # script is committed from a Windows workstation.

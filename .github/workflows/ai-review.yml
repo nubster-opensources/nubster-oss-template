@@ -13,15 +13,15 @@ jobs:
   team:
     uses: nubster-opensources/.github/.github/workflows/ai-review.yml@bc8fba70d4ef8e85050914b1e836841255d872d2 # main
     with:
-      pr-number: {% raw %}${{ github.event.pull_request.number }}{% endraw %}
+      pr-number: ${{ github.event.pull_request.number }}
       mode: team
     secrets:
-      mistral-api-key: {% raw %}${{ secrets.MISTRAL_API_KEY }}{% endraw %}
+      mistral-api-key: ${{ secrets.MISTRAL_API_KEY }}
 
   describe:
     uses: nubster-opensources/.github/.github/workflows/ai-review.yml@bc8fba70d4ef8e85050914b1e836841255d872d2 # main
     with:
-      pr-number: {% raw %}${{ github.event.pull_request.number }}{% endraw %}
+      pr-number: ${{ github.event.pull_request.number }}
       mode: describe
     secrets:
-      mistral-api-key: {% raw %}${{ secrets.MISTRAL_API_KEY }}{% endraw %}
+      mistral-api-key: ${{ secrets.MISTRAL_API_KEY }}
