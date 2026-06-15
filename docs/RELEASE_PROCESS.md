@@ -77,6 +77,10 @@ Pushing the tag fires `.github/workflows/release.yml`, which:
 | GitHub Release has no notes | CHANGELOG section missing for the version | Add a section `## [X.Y.Z] - YYYY-MM-DD` to CHANGELOG.md |
 | `gh pr create` fails with auth error | `GH_TOKEN` not set or expired | Re-authenticate with `gh auth login` |
 
+## Milestones
+
+GitHub milestones follow the format `vX.Y.0 - Theme` (example: `v0.6.0 - Scheduler`). Each milestone should include a one-sentence description of its scope and link the issues that belong to it. This naming convention keeps the [roadmap](explanation/roadmap.md) and the GitHub milestone list in sync.
+
 ## Adding it to the project
 
 This process is already wired up via:
