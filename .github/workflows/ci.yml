@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-D warnings"
+
+jobs:
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@{{msrv}}.0
+        with:
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+
+  clippy:
+    name: Clippy (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@{{msrv}}.0
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}
+      - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+  test:
+    name: Build and test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@{{msrv}}.0
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.os }}
+      - run: cargo test --workspace --all-features --no-fail-fast
+
+  doc:
+    name: Documentation
+    runs-on: ubuntu-latest
+    env:
+      RUSTDOCFLAGS: "-D warnings"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@{{msrv}}.0
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: doc
+      - run: cargo doc --workspace --all-features --no-deps
+
+  supply-chain:
+    name: Supply chain
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check
+
+  msrv-check:
+    name: MSRV check (Rust {{msrv}})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@{{msrv}}.0
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: msrv
+      - run: cargo +{{msrv}} check --workspace --all-features
+
+  cargo-audit:
+    name: Cargo audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@{{msrv}}.0
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: cargo-audit
+      - run: cargo install --locked cargo-audit
+      - run: cargo audit
+
+  # TODO: add project-specific integration tests here.
+  # Example:
+  #   integration:
+  #     name: Integration tests
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - uses: actions/checkout@v6
+  #       - uses: dtolnay/rust-toolchain@{{msrv}}.0
+  #       - run: cargo test -p {{crate_name}} --test <test-name> -- --nocapture
