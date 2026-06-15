@@ -1,10 +1,9 @@
 [template]
 cargo_generate_version = ">=0.21.0"
 
-[placeholders.crate_name]
-type = "string"
-prompt = "Crate name (snake_case, e.g. my_lib)"
-regex = "^[a-z][a-z0-9_]*$"
+# `project-name` is provided by cargo-generate (--name flag).
+# `crate_name` is derived automatically from `project-name` (snake_case) by cargo-generate.
+# Do not redeclare those two as custom placeholders.
 
 [placeholders.project-description]
 type = "string"

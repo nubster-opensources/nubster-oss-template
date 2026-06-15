@@ -45,7 +45,7 @@ jobs:
         id: mode
         shell: bash
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.dry_run }}" == "true" ]]; then
+          if [[ "{% raw %}${{ github.event_name }}{% endraw %}" == "workflow_dispatch" && "{% raw %}${{ inputs.dry_run }}{% endraw %}" == "true" ]]; then
             echo "args=--dry-run" >> "$GITHUB_OUTPUT"
             echo "is_dry=true" >> "$GITHUB_OUTPUT"
             echo "Publishing in DRY-RUN mode"
@@ -56,19 +56,19 @@ jobs:
           fi
 
       - name: Workspace build (dry-run only, catches cross-crate compile errors)
-        if: steps.mode.outputs.is_dry == 'true'
+        if: {% raw %}${{ steps.mode.outputs.is_dry == 'true' }}{% endraw %}
         run: cargo build --workspace --all-features --release
 
       - name: Publish {{crate_name}}
         env:
-          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-        run: cargo publish -p {{crate_name}} ${{ steps.mode.outputs.args }}
+          CARGO_REGISTRY_TOKEN: {% raw %}${{ secrets.CARGO_REGISTRY_TOKEN }}{% endraw %}
+        run: cargo publish -p {{crate_name}} {% raw %}${{ steps.mode.outputs.args }}{% endraw %}
 
   github-release:
-    name: Create GitHub Release
+    name: Create Release
     runs-on: ubuntu-latest
     needs: publish
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: {% raw %}${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}{% endraw %}
     permissions:
       contents: write
     steps:
@@ -91,7 +91,7 @@ jobs:
       - name: Extract changelog section
         id: changelog
         env:
-          VERSION: ${{ steps.version.outputs.version }}
+          VERSION: {% raw %}${{ steps.version.outputs.version }}{% endraw %}
         shell: bash
         run: |
           awk -v v="[$VERSION]" '
@@ -106,10 +106,10 @@ jobs:
           echo "--- Release notes preview ---"
           cat release-notes.md
 
-      - name: Create GitHub Release
+      - name: Create Release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+          VERSION: {% raw %}${{ steps.version.outputs.version }}{% endraw %}
         run: |
           gh release create "v$VERSION" \
             --title "v$VERSION" \

@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
 
       - uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # v1
         with:
@@ -45,8 +45,8 @@ jobs:
 
       - name: Run release prep script
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LEVEL: ${{ inputs.level }}
+          GH_TOKEN: {% raw %}${{ secrets.GITHUB_TOKEN }}{% endraw %}
+          LEVEL: {% raw %}${{ inputs.level }}{% endraw %}
         # Invoked via `bash` explicitly so the runner does not depend on
         # the executable bit, which is not always preserved when the
         # script is committed from a Windows workstation.

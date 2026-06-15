@@ -26,8 +26,8 @@ jobs:
       - run: cargo fmt --all -- --check
 
   clippy:
-    name: Clippy (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+    name: Clippy ({% raw %}${{ matrix.os }}{% endraw %})
+    runs-on: {% raw %}${{ matrix.os }}{% endraw %}
     strategy:
       fail-fast: false
       matrix:
@@ -39,12 +39,12 @@ jobs:
           components: clippy
       - uses: Swatinem/rust-cache@v2
         with:
-          key: ${{ matrix.os }}
+          key: {% raw %}${{ matrix.os }}{% endraw %}
       - run: cargo clippy --workspace --all-targets --all-features -- -D warnings
 
   test:
-    name: Build and test (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+    name: Build and test ({% raw %}${{ matrix.os }}{% endraw %})
+    runs-on: {% raw %}${{ matrix.os }}{% endraw %}
     strategy:
       fail-fast: false
       matrix:
@@ -54,7 +54,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@{{msrv}}.0
       - uses: Swatinem/rust-cache@v2
         with:
-          key: ${{ matrix.os }}
+          key: {% raw %}${{ matrix.os }}{% endraw %}
       - run: cargo test --workspace --all-features --no-fail-fast
 
   doc:
