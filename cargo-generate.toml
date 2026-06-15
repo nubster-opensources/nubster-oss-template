@@ -1,0 +1,16 @@
+[template]
+cargo_generate_version = ">=0.21.0"
+
+[placeholders.crate_name]
+type = "string"
+prompt = "Crate name (snake_case, e.g. my_lib)"
+regex = "^[a-z][a-z0-9_]*$"
+
+[placeholders.project-description]
+type = "string"
+prompt = "One-line description of the project (shown in Cargo.toml and README)"
+
+[placeholders.msrv]
+type = "string"
+prompt = "Minimum Supported Rust Version (MSRV)"
+default = "1.88"

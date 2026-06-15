@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "{{msrv}}"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/nubster-opensources/{{project-name}}"
+homepage = "https://nubster.com"
+authors = ["Nubster <oss@nubster.com>"]
+
+[workspace.lints.rust]
+missing_docs = "deny"
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
