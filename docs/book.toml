@@ -1,0 +1,12 @@
+[book]
+title = "{{project-name}}"
+language = "en"
+multilingual = false
+src = "."
+
+[build]
+build-dir = "../book"
+
+[output.html]
+git-repository-url = "https://github.com/nubster-opensources/{{project-name}}"
+edit-url-template = "https://github.com/nubster-opensources/{{project-name}}/edit/main/docs/{path}"

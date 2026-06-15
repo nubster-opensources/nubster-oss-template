@@ -1,0 +1,27 @@
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+- name: "kind:bug"
+  color: "d73a4a"
+  description: "Something is not working as expected"
+
+- name: "kind:feature"
+  color: "a2eeef"
+  description: "New capability or improvement"
+
+- name: "kind:docs"
+  color: "0075ca"
+  description: "Documentation improvements"
+
+- name: "kind:chore"
+  color: "0366d6"
+  description: "Maintenance, dependencies, CI"
+
+- name: "kind:security"
+  color: "b60205"
+  description: "Security fix or hardening"
+
+- name: "kind:breaking"
+  color: "e11d21"
+  description: "Breaking change to the public API"
