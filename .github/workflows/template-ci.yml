@@ -30,6 +30,7 @@ jobs:
 
       - name: Generate probe project
         run: |
+          mkdir -p "${{ runner.temp }}/gen"
           cargo generate \
             --path . \
             --name probe-svc \
