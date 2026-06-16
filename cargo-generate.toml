@@ -1,0 +1,24 @@
+[template]
+cargo_generate_version = ">=0.21.0"
+# Workflows contain ${{ ... }} GitHub Actions expressions that must be copied
+# verbatim (not interpreted as Liquid/Rhai placeholders by cargo-generate).
+exclude = [
+  ".github/workflows/ci.yml",
+  ".github/workflows/release.yml",
+  ".github/workflows/bump.yml",
+  ".github/workflows/ai-review.yml",
+  ".github/workflows/template-ci.yml",
+]
+
+# `project-name` is provided by cargo-generate (--name flag).
+# `crate_name` is derived automatically from `project-name` (snake_case) by cargo-generate.
+# Do not redeclare those two as custom placeholders.
+
+[placeholders.project-description]
+type = "string"
+prompt = "One-line description of the project (shown in Cargo.toml and README)"
+
+[placeholders.msrv]
+type = "string"
+prompt = "Minimum Supported Rust Version (MSRV)"
+default = "1.88"

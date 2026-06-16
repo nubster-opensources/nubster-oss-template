@@ -1,0 +1,13 @@
+{
+  "name": "{{project-name}} dev container",
+  "image": "mcr.microsoft.com/devcontainers/rust:1-{{msrv}}-bookworm",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  },
+  "postCreateCommand": "rustup component add clippy rustfmt"
+}

@@ -1,0 +1,52 @@
+name: Template CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-template:
+    name: Validate template generation
+    runs-on: ubuntu-latest
+    env:
+      # The template root carries a rust-toolchain.toml with a literal channel
+      # `{{msrv}}.0`, which is only valid once generated. Pin the toolchain via
+      # the environment so cargo commands run from the template root ignore it.
+      RUSTUP_TOOLCHAIN: stable
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: template-ci
+
+      - name: Install cargo-generate
+        run: cargo install cargo-generate --locked
+
+      - name: Generate probe project
+        run: |
+          mkdir -p "${{ runner.temp }}/gen"
+          cargo generate \
+            --path . \
+            --name probe-svc \
+            --define project-description="A probe service" \
+            --define msrv="1.88" \
+            --destination ${{ runner.temp }}/gen \
+            --silent
+
+      - name: Check formatting in generated project
+        working-directory: ${{ runner.temp }}/gen/probe-svc
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy in generated project
+        working-directory: ${{ runner.temp }}/gen/probe-svc
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Run tests in generated project
+        working-directory: ${{ runner.temp }}/gen/probe-svc
+        run: cargo test --all-features
