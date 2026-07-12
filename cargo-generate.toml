@@ -1,13 +1,16 @@
 [template]
 cargo_generate_version = ">=0.21.0"
-# Workflows contain ${{ ... }} GitHub Actions expressions that must be copied
-# verbatim (not interpreted as Liquid/Rhai placeholders by cargo-generate).
+# These files contain double-brace sequences ({{ ... }}) that must be copied
+# verbatim, not interpreted as Liquid/Rhai placeholders by cargo-generate:
+# workflows carry GitHub Actions expressions, and the identity coherence script
+# matches a literal "{{" to detect ungenerated placeholders.
 exclude = [
   ".github/workflows/ci.yml",
   ".github/workflows/release.yml",
   ".github/workflows/bump.yml",
   ".github/workflows/ai-review.yml",
   ".github/workflows/template-ci.yml",
+  "scripts/check-identity-coherence.sh",
 ]
 
 # `project-name` is provided by cargo-generate (--name flag).

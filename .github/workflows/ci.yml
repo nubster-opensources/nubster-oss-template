@@ -26,6 +26,17 @@ jobs:
           components: rustfmt
       - run: cargo fmt --all -- --check
 
+  identity-coherence:
+    name: Identity coherence
+    runs-on: ubuntu-latest
+    if: ${{ github.repository != 'nubster-opensources/nubster-oss-template' }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - run: bash scripts/check-identity-coherence.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+
   clippy:
     name: Clippy (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
