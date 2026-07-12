@@ -26,8 +26,9 @@ lcov.info
 .DS_Store
 Thumbs.db
 
-# Session state (Claude Code remember plugin)
+# Local session and working state
 .remember/
+.work/
 
 # mdBook generated assets
 book/
