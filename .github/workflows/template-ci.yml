@@ -12,6 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # cargo-generate is build tooling and may require a newer compiler than
+      # the projects produced by this template.
+      - uses: dtolnay/rust-toolchain@stable
+
       - uses: dtolnay/rust-toolchain@1.89.0
         with:
           components: rustfmt, clippy
@@ -21,7 +25,7 @@ jobs:
           key: template-ci
 
       - name: Install cargo-generate
-        run: cargo install cargo-generate --locked
+        run: cargo +stable install cargo-generate --locked
 
       - name: Generate probe project
         run: |
