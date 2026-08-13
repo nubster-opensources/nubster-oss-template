@@ -9,15 +9,14 @@ jobs:
   validate-template:
     name: Validate template generation
     runs-on: ubuntu-latest
-    env:
-      # The template root carries a rust-toolchain.toml with a literal channel
-      # `{{msrv}}.0`, which is only valid once generated. Pin the toolchain via
-      # the environment so cargo commands run from the template root ignore it.
-      RUSTUP_TOOLCHAIN: stable
     steps:
       - uses: actions/checkout@v7
 
+      # cargo-generate is build tooling and may require a newer compiler than
+      # the projects produced by this template.
       - uses: dtolnay/rust-toolchain@stable
+
+      - uses: dtolnay/rust-toolchain@1.89.0
         with:
           components: rustfmt, clippy
 
@@ -26,7 +25,7 @@ jobs:
           key: template-ci
 
       - name: Install cargo-generate
-        run: cargo install cargo-generate --locked
+        run: cargo +stable install cargo-generate --locked
 
       - name: Generate probe project
         run: |
@@ -35,7 +34,6 @@ jobs:
             --path . \
             --name probe-svc \
             --define project-description="A probe service" \
-            --define msrv="1.88" \
             --destination ${{ runner.temp }}/gen \
             --silent
 

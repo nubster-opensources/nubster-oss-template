@@ -1,26 +1,28 @@
 # Minimum Supported Rust Version (MSRV) policy
 
-{{project-name}} targets Rust **{{msrv}}** as its Minimum Supported Rust Version.
+{{project-name}} targets Rust **1.89** as its Minimum Supported Rust Version.
 
-This means every release is guaranteed to compile on stable Rust {{msrv}} without any nightly or unstable features.
+This means every release is guaranteed to compile on stable Rust 1.89 without any nightly or unstable features.
 
 ## How the MSRV evolves
 
-- {{project-name}} does not commit to supporting Rust versions older than {{msrv}}.
-- An MSRV bump is treated as a **minor** version bump per the [semver policy](SEMVER_POLICY.md). For example, raising the MSRV from {{msrv}} to a newer version ships in a `0.X.0` release (or `X.0.0` once at 1.0).
+- {{project-name}} does not commit to supporting Rust versions older than 1.89.
+- An MSRV bump is treated as a **minor** version bump per the [semver policy](SEMVER_POLICY.md). For example, raising the MSRV from 1.89 to a newer version ships in a `0.X.0` release (or `X.0.0` once at 1.0).
 - The current MSRV is documented in `CHANGELOG.md` under the `Changed` section of the release that bumps it.
 
 ## Why we pick the floor we pick
 
-- **{{msrv}}** is required because {{project-name}} uses Rust edition 2024.
-- Future bumps will be driven by concrete features the project needs, not by chasing the latest stable.
+- **1.89** is the August 2026 Nubster open source fleet baseline.
+- The fleet baseline is reviewed in February and August. Project-specific bumps
+  may happen earlier for concrete language, dependency, correctness, or security
+  requirements.
 
 ## How we verify the MSRV in CI
 
 The `msrv-check` job in `.github/workflows/ci.yml` runs:
 
 ```sh
-cargo +{{msrv}} check --workspace --all-features
+cargo +1.89 check --workspace --all-features
 ```
 
 This job is part of the required status checks and blocks merging if it fails.
