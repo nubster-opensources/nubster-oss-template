@@ -1,6 +1,6 @@
 {
   "name": "{{project-name}} dev container",
-  "image": "mcr.microsoft.com/devcontainers/rust:1-{{msrv}}-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/rust:1-1.89-bookworm",
   "customizations": {
     "vscode": {
       "extensions": [
